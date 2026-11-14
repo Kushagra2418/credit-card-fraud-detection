@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENTINEL AI — Credit Card Fraud Detection Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-['Plus_Jakarta_Sans'] flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <span class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">SENTINEL AI</span>
+          <span class="text-xs ml-2 px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono">INDIA-PROD (₹)</span>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4 text-xs font-mono">
+        <div class="flex items-center space-x-2 bg-emerald-950/60 border border-emerald-800 px-3 py-1.5 rounded-full text-emerald-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Engine: HistGradientBoosting (PR-AUC 0.967)</span>
+        </div>
+        <a href="/api/download-report" target="_blank" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 transition">
+          <i data-lucide="file-text" class="w-4 h-4 text-cyan-400"></i>
+          <span>PDF Report</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="border-b border-slate-800 bg-slate-900/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-8">
+      <button onclick="switchTab('realtime')" id="tab-btn-realtime" class="tab-btn py-4 text-sm font-semibold border-b-2 border-cyan-500 text-cyan-400 flex items-center space-x-2">
+        <i data-lucide="zap" class="w-4 h-4"></i>
+        <span>Live Risk Simulator</span>
+      </button>
+      <button onclick="switchTab('batch')" id="tab-btn-batch" class="tab-btn py-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i data-lucide="layers" class="w-4 h-4"></i>
+        <span>Batch CSV Scanner</span>
+      </button>
+      <button onclick="switchTab('benchmark')" id="tab-btn-benchmark" class="tab-btn py-4 text-sm font-medium border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        <span>Model Benchmark & Research</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- TAB 1: LIVE TRANSACTION RISK SIMULATOR -->
+    <div id="tab-realtime" class="space-y-6">
+      
+      <!-- Preset Quick Loader -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-2 text-sm text-slate-300">
+          <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+          <span class="font-semibold">Quick-Load Presets:</span>
+          <span class="text-xs text-slate-500">(1-Click test cases)</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="loadPreset('legit')" class="preset-btn bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-800 text-emerald-300 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Verified Normal Purchase (₹450)</span>
+          </button>
+          <button onclick="loadPreset('fraud')" class="preset-btn bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800 text-rose-300 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+            <span>Verified Fraud Attack (₹85,000)</span>
+          </button>
+          <button onclick="loadPreset('borderline')" class="preset-btn bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800 text-amber-300 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>Borderline High Amount (₹24,999)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Transaction Form -->
+        <div class="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="credit-card" class="w-5 h-5 text-cyan-400"></i>
+              <span>Transaction Parameters</span>
+            </h2>
+            <span class="text-xs text-slate-500 font-mono">Live Validation</span>
+          </div>
+
+          <form id="tx-form" onsubmit="handleSinglePrediction(event)" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Transaction Amount (₹)</label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-bold">₹</span>
+                  <input type="number" step="0.01" min="0" id="input-amt" required value="450.00"
+                         class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono">
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Merchant Category</label>
+                <select id="input-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                  <option value="grocery_pos">Grocery Store (POS)</option>
+                  <option value="shopping_net" selected>Online Shopping (Net)</option>
+                  <option value="misc_net">Miscellaneous Online</option>
+                  <option value="gas_transport">Fuel & Transport</option>
+                  <option value="travel">Travel & Flights</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="food_dining">Food & Dining</option>
+                  <option value="health_fitness">Health & Fitness</option>
+                  <option value="personal_care">Personal Care</option>
+                  <option value="shopping_pos">Retail Shopping (POS)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Transaction Datetime</label>
+                <input type="text" id="input-datetime" value="2026-11-14 14:30:00"
+                       class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1">Cardholder DOB & Gender</label>
+                <div class="flex space-x-2">
+                  <input type="text" id="input-dob" value="1992-06-15"
+                         class="w-2/3 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono">
+                  <select id="input-gender" class="w-1/3 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Geolocation Coordinates -->
+            <div class="border-t border-slate-800/80 pt-3">
+              <span class="text-xs font-bold text-slate-400 flex items-center space-x-1.5 mb-2">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-cyan-400"></i>
+                <span>Geolocation Coordinates (India / Velocity)</span>
+              </span>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div>
+                  <label class="text-slate-500 block">User Lat</label>
+                  <input type="number" step="0.0001" id="input-lat" value="19.0760"
+                         class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-white font-mono">
+                </div>
+                <div>
+                  <label class="text-slate-500 block">User Long</label>
+                  <input type="number" step="0.0001" id="input-long" value="72.8777"
+                         class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-white font-mono">
+                </div>
+                <div>
+                  <label class="text-slate-500 block">Merch Lat</label>
+                  <input type="number" step="0.0001" id="input-merch-lat" value="19.0820"
+                         class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-white font-mono">
+                </div>
+                <div>
+                  <label class="text-slate-500 block">Merch Long</label>
+                  <input type="number" step="0.0001" id="input-merch-long" value="72.8810"
+                         class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-white font-mono">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">City Population</label>
+              <input type="number" id="input-city-pop" value="12500000"
+                     class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 font-mono">
+            </div>
+
+            <button type="submit" id="btn-analyze" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2 transition">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+              <span>EXECUTE REAL-TIME FRAUD INFERENCE</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Real-Time Risk Verdict Card -->
+        <div class="lg:col-span-5 flex flex-col space-y-6">
+          <div id="verdict-card" class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Risk Assessment</span>
+                <span id="res-latency" class="text-xs font-mono text-cyan-400">Inference: -- ms</span>
+              </div>
+
+              <!-- Main Score Display -->
+              <div class="py-8 text-center space-y-3">
+                <div id="risk-score-badge" class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                  <span>AWAITING INPUT</span>
+                </div>
+
+                <div class="flex items-baseline justify-center space-x-1">
+                  <span id="risk-score-pct" class="text-6xl font-black tracking-tight text-white font-mono">0.0</span>
+                  <span class="text-2xl font-bold text-slate-500 font-mono">%</span>
+                </div>
+                <p class="text-xs text-slate-400 font-medium">Estimated Fraud Probability Score</p>
+                
+                <!-- Dynamic Progress Bar -->
+                <div class="w-full bg-slate-950 rounded-full h-3 p-0.5 border border-slate-800 mt-4">
+                  <div id="risk-bar" class="bg-cyan-500 h-2 rounded-full transition-all duration-700" style="width: 5%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Recommendation -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500 block">System Recommendation</span>
+              <p id="res-action" class="text-xs font-semibold text-slate-300">Run analysis to obtain decision verdict and recommended rule enforcement.</p>
+            </div>
+
+            <!-- Computed Signal Highlights -->
+            <div class="grid grid-cols-3 gap-2 text-center text-xs pt-4 border-t border-slate-800 font-mono">
+              <div class="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+                <span class="text-slate-500 text-[10px] block">DISTANCE</span>
+                <span id="stat-dist" class="font-bold text-slate-300">-- km</span>
+              </div>
+              <div class="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+                <span class="text-slate-500 text-[10px] block">WINDOW</span>
+                <span id="stat-window" class="font-bold text-slate-300">--</span>
+              </div>
+              <div class="bg-slate-950/60 p-2 rounded-lg border border-slate-800">
+                <span class="text-slate-500 text-[10px] block">AGE</span>
+                <span id="stat-age" class="font-bold text-slate-300">-- yrs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: BATCH CSV SCANNER -->
+    <div id="tab-batch" class="hidden space-y-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="layers" class="w-5 h-5 text-cyan-400"></i>
+              <span>High-Throughput Batch Transaction Scanner</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Upload a CSV file of transactions to run vectorized fraud classification across thousands of records.</p>
+          </div>
+          <a href="/api/sample-batch-csv" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-slate-700 px-3 py-2 rounded-xl text-xs font-semibold transition">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Download Sample CSV (50 Rows)</span>
+          </a>
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div class="mt-6 border-2 border-dashed border-slate-700 hover:border-cyan-500 rounded-2xl p-8 text-center transition cursor-pointer bg-slate-950/40"
+             onclick="document.getElementById('batch-file-input').click()">
+          <input type="file" id="batch-file-input" accept=".csv" class="hidden" onchange="handleFileUpload(event)">
+          <div class="flex flex-col items-center space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center">
+              <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-white">Click or drag & drop CSV transaction file</p>
+              <p class="text-xs text-slate-500 mt-0.5">Supports transactions with amounts, categories, and coordinates</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batch Results Dashboard -->
+        <div id="batch-results-section" class="hidden mt-8 space-y-6">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <span class="text-xs text-slate-500 font-mono">TOTAL TRANSACTIONS</span>
+              <p id="b-total" class="text-2xl font-bold text-white font-mono mt-1">0</p>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-emerald-900/60">
+              <span class="text-xs text-emerald-400 font-mono">APPROVED LEGIT</span>
+              <p id="b-approved" class="text-2xl font-bold text-emerald-400 font-mono mt-1">0</p>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-rose-900/60">
+              <span class="text-xs text-rose-400 font-mono">FLAGGED FRAUD</span>
+              <p id="b-flagged" class="text-2xl font-bold text-rose-400 font-mono mt-1">0</p>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-cyan-900/60">
+              <span class="text-xs text-cyan-400 font-mono">FLAG RATE</span>
+              <p id="b-rate" class="text-2xl font-bold text-cyan-400 font-mono mt-1">0.0%</p>
+            </div>
+          </div>
+
+          <!-- Flagged Transactions Table -->
+          <div class="border border-slate-800 rounded-xl overflow-hidden">
+            <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300">Detected High-Risk Suspicious Transactions</span>
+              <span class="text-xs text-rose-400 font-mono">Priority Audit Queue</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950 text-slate-400 font-mono border-b border-slate-800">
+                  <tr>
+                    <th class="px-4 py-2.5">Amount (₹)</th>
+                    <th class="px-4 py-2.5">Category</th>
+                    <th class="px-4 py-2.5">Risk Score</th>
+                    <th class="px-4 py-2.5">Verdict</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-table-body" class="divide-y divide-slate-800/60">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: BENCHMARK & RESEARCH REPORT -->
+    <div id="tab-benchmark" class="hidden space-y-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+              <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i>
+              <span>4-Model Algorithmic Progression & Benchmark</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Rigorous comparative evaluation across 240,000+ real transactions on identical test splits.</p>
+          </div>
+          <a href="/api/download-report" class="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-cyan-500/20 transition">
+            <i data-lucide="file-down" class="w-4 h-4"></i>
+            <span>DOWNLOAD COMPLETE RESEARCH PDF</span>
+          </a>
+        </div>
+
+        <div class="overflow-x-auto border border-slate-800 rounded-xl">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-950 text-slate-300 font-mono border-b border-slate-800">
+              <tr>
+                <th class="px-4 py-3">Algorithm Paradigm</th>
+                <th class="px-4 py-3">Accuracy</th>
+                <th class="px-4 py-3">Precision</th>
+                <th class="px-4 py-3">Recall (Sensitivity)</th>
+                <th class="px-4 py-3">F1-Score</th>
+                <th class="px-4 py-3">ROC-AUC</th>
+                <th class="px-4 py-3">PR-AUC (Gold Std)</th>
+              </tr>
+            </thead>
+            <tbody id="benchmark-tbody" class="divide-y divide-slate-800/80"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800/60 py-4 bg-slate-950 text-center text-xs text-slate-500 font-mono">
+    SENTINEL AI &bull; Production Machine Learning Architecture &bull; Assignment 1 Complete Solution
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

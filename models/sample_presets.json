@@ -1,0 +1,41 @@
+{
+  "legit": {
+    "trans_date_trans_time": "2020-09-02 17:34:33",
+    "category": "home",
+    "amt": 84.46,
+    "gender": "M",
+    "lat": 38.1981,
+    "long": -86.6821,
+    "city_pop": "965",
+    "dob": "1982-02-10",
+    "merch_lat": 37.568423,
+    "merch_long": -86.806126,
+    "is_fraud": "0"
+  },
+  "fraud": {
+    "trans_date_trans_time": "2020-07-28 00:48:10",
+    "category": "grocery_pos",
+    "amt": 269.01,
+    "gender": "M",
+    "lat": 36.802,
+    "long": -87.8286,
+    "city_pop": "13422",
+    "dob": "1961-09-03",
+    "merch_lat": 37.736837,
+    "merch_long": -88.55758399999999,
+    "is_fraud": "1"
+  },
+  "borderline": {
+    "trans_date_trans_time": "2020-12-22 17:19:12",
+    "category": "personal_care",
+    "amt": 25.93,
+    "gender": "M",
+    "lat": 35.6069,
+    "long": -90.3359,
+    "city_pop": "2470",
+    "dob": "1968-10-06",
+    "merch_lat": 35.339438,
+    "merch_long": -90.314716,
+    "is_fraud": "0"
+  }
+}

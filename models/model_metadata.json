@@ -1,0 +1,137 @@
+{
+  "model_type": "HistGradientBoostingClassifier",
+  "optimal_threshold": 0.35,
+  "feature_cols": [
+    "amt",
+    "distance_km",
+    "age",
+    "log_city_pop",
+    "hour",
+    "day_of_week",
+    "is_night",
+    "gender_enc",
+    "cat_entertainment",
+    "cat_food_dining",
+    "cat_gas_transport",
+    "cat_grocery_net",
+    "cat_grocery_pos",
+    "cat_health_fitness",
+    "cat_home",
+    "cat_kids_pets",
+    "cat_misc_net",
+    "cat_misc_pos",
+    "cat_personal_care",
+    "cat_shopping_net",
+    "cat_shopping_pos",
+    "cat_travel"
+  ],
+  "num_features": [
+    "amt",
+    "distance_km",
+    "age",
+    "log_city_pop",
+    "hour",
+    "day_of_week"
+  ],
+  "categories": [
+    "entertainment",
+    "food_dining",
+    "gas_transport",
+    "grocery_net",
+    "grocery_pos",
+    "health_fitness",
+    "home",
+    "kids_pets",
+    "misc_net",
+    "misc_pos",
+    "personal_care",
+    "shopping_net",
+    "shopping_pos",
+    "travel"
+  ],
+  "results": [
+    {
+      "model_name": "1. Baseline Logistic Regression (Unweighted)",
+      "accuracy": 0.9775,
+      "precision": 0.8447,
+      "recall": 0.4261,
+      "f1_score": 0.5665,
+      "roc_auc": 0.935,
+      "pr_auc": 0.6108,
+      "confusion_matrix": [
+        [
+          59832,
+          168
+        ],
+        [
+          1231,
+          914
+        ]
+      ]
+    },
+    {
+      "model_name": "2. Cost-Sensitive Logistic Regression (Balanced)",
+      "accuracy": 0.8541,
+      "precision": 0.18,
+      "recall": 0.9077,
+      "f1_score": 0.3004,
+      "roc_auc": 0.9477,
+      "pr_auc": 0.5623,
+      "confusion_matrix": [
+        [
+          51130,
+          8870
+        ],
+        [
+          198,
+          1947
+        ]
+      ]
+    },
+    {
+      "model_name": "3. Balanced Random Forest",
+      "accuracy": 0.9846,
+      "precision": 0.7081,
+      "recall": 0.9445,
+      "f1_score": 0.8094,
+      "roc_auc": 0.9922,
+      "pr_auc": 0.9399,
+      "confusion_matrix": [
+        [
+          59165,
+          835
+        ],
+        [
+          119,
+          2026
+        ]
+      ]
+    },
+    {
+      "model_name": "4. HistGradientBoosting (Champion)",
+      "accuracy": 0.9849,
+      "precision": 0.7041,
+      "recall": 0.9683,
+      "f1_score": 0.8153,
+      "roc_auc": 0.9979,
+      "pr_auc": 0.9669,
+      "confusion_matrix": [
+        [
+          59127,
+          873
+        ],
+        [
+          68,
+          2077
+        ]
+      ]
+    }
+  ],
+  "metrics_summary": {
+    "champion_recall": 0.9683,
+    "champion_precision": 0.7041,
+    "champion_f1": 0.8153,
+    "champion_pr_auc": 0.9669,
+    "champion_roc_auc": 0.9979
+  }
+}

@@ -1,0 +1,26 @@
+# Large Raw Datasets (Exceeds GitHub 100MB file limit)
+data/fraudTrain.csv
+data/fraudTest.csv
+notebooks/*.csv
+*.zip
+
+# Python caches
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*.class
+*.so
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.env
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
